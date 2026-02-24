@@ -1,0 +1,197 @@
+openapi: 3.1.0
+info:
+  title: JSON Web Encryption in JSON serialization
+  description: OpenAPI Specification for JSON Web Encryption (JWE) tokens serialized using the JSON serialization (complete or flattened)
+  version: 1.0.0
+externalDocs:
+  description: Find out more on the JWE RFC webpage
+  url: https://www.rfc-editor.org/rfc/rfc7516.html
+
+tags:
+  - name: jwe
+    description: JWE
+
+
+paths:
+  /jwe-complete-json-serialization:
+    put:
+      tags:
+        - jwe
+      summary: JWE complete JSON serialization.
+      description: An example of a JSON payload containing a JWE serialized in complete JSON.
+      operationId: putJweComplete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JweComplete'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JweComplete'
+  /jwe-flattened-json-serialization:
+    put:
+      tags:
+        - jwe
+      summary: Flattened JWE JSON serialization.
+      description: An example of a JSON payload containing a JWE serialized in flattened JSON.
+      operationId: putJweFlattened
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JweFlattened'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JweFlattened'
+
+components:
+  schemas:
+
+    JweComplete:
+      required:
+        - recipients
+        - ciphertext
+      type: object
+      properties:
+        protected:
+          type: string
+          description: Protected Header
+          examples: [eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0]
+        unprotected:
+          description: Shared Unprotected Header
+          $ref: '#/components/schemas/JweHeader'
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/JweRecipient'
+        iv:
+          type: string
+          description: Initialization Vector
+          examples: [AxY8DCtDaGlsbGljb3RoZQ]
+        ciphertext:
+          type: string
+          description: Ciphertext
+          examples: [KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY]
+        tag:
+          type: string
+          description: Authentication Tag
+          examples: [Mz-VPPyU4RlcuYv1IwIvzw]
+        aad:
+          type: string
+          description: Additional Authenticated Data
+
+    JweFlattened:
+      required:
+        - ciphertext
+      type: object
+      properties:
+        protected:
+          type: string
+          description: Protected Header
+          examples: [eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0]
+        unprotected:
+          description: Shared Unprotected Header
+          $ref: '#/components/schemas/JweHeader'
+        header:
+          $ref: '#/components/schemas/JweHeader'
+        encrypted_key:
+          $ref: '#/components/schemas/JweEncryptedKey'
+        iv:
+          type: string
+          description: Initialization Vector
+          examples: [AxY8DCtDaGlsbGljb3RoZQ]
+        ciphertext:
+          type: string
+          description: Ciphertext
+          examples: [KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY]
+        tag:
+          type: string
+          description: Authentication Tag
+          examples: [Mz-VPPyU4RlcuYv1IwIvzw]
+        aad:
+          type: string
+          description: Additional Authenticated Data
+
+    JweRecipient:
+      type: object
+      description: Recipient of the JWE token
+      required:
+        - header
+        - encrypted_key
+      properties:
+        header:
+          description: Per-Recipient Unprotected Header
+          $ref: '#/components/schemas/JweHeader'
+          examples: ['{"alg":"A128KW","kid":"7"}']
+        encrypted_key:
+          $ref: '#/components/schemas/JweEncryptedKey'
+    JweEncryptedKey:
+      type: string
+      description: JWE Encrypted Key, BASE64URL-encoded
+      examples: [6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ]
+    JweHeader:
+      type: object
+      properties:
+        alg:
+          type: string
+          description: Algorithm
+          examples: [RSA1_5]
+        enc:
+          type: string
+          description: Encryption Algorithm
+          examples: [A128CBC-HS256]
+        zip:
+          type: string
+          description: Compression Algorithm
+          examples: [DEF]
+        jku:
+          type: string
+          description: JWK Set URL
+          examples: [https://server.example.com/keys.jwks]
+        jwk:
+          type: string
+          description: JSON Web Key
+          examples: []
+        kid:
+          type: string
+          description: Key ID
+          examples: [my-key-id]
+        x5u:
+          type: string
+          description: X.509 URL
+          examples: []
+        x5c:
+          type: string
+          description: X.509 Certificate Chain
+          examples: []
+        x5t:
+          type: string
+          description: X.509 Certificate SHA-1 Thumbprint
+          examples: []
+        x5t#S256:
+          type: string
+          description: X.509 Certificate SHA-256 Thumbprint
+          examples: []
+        typ:
+          type: string
+          description: Type
+          examples: [JOSE, JOSE+JSON]
+        cty:
+          type: string
+          description: Content Type
+          examples: [json]
+        crit:
+          type: string
+          description: Critical Header Parameter
+          examples: []
+
